@@ -85,7 +85,6 @@ long int RandWalk(igraph_t *graph,long int steps, long int startNode){
     return nextNode;
 }
 
-
 /**
  * \function main
  * 
