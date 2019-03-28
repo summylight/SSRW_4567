@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/SSRW5",
-            "args": ["~/graph/testfile/flixster.gtries","1000000"],
+            "args": ["/home/guang/graphform/HR_edges.gtries","10000", "1","0","10"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

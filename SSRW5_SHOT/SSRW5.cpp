@@ -85,6 +85,7 @@ long int RandWalk(igraph_t *graph,long int steps, long int startNode){
     return nextNode;
 }
 
+
 /**
  * \function main
  * 
@@ -108,7 +109,6 @@ int main(int argc, char* argv[]){
     long int walk_per_jump = atol(argv[3]);
     long int NEXTJUMP = atol(argv[4]);
     int repeat_time =atoi(argv[5]);
-    long long sample_total=0;
     FILE *instream = fopen(filename,"r");
     if(!instream){
         string msg="Open file fail!:";
@@ -142,157 +142,157 @@ int main(int argc, char* argv[]){
     igraph_small(&graph[20],5,IGRAPH_UNDIRECTED,0,1,0,2,0,3,0,4,1,2,1,3,1,4,2,3,2,4,3,4,-1);
     //for(int i=0;i<MAXSUBNAME;++i)
     //    igraph_write_graph_edgelist(&graph[i],stdout);
-    int W_constant[]={24,8,40,20,18,68,60,156,2,12,64,10,46,124,40,108,244,108,232,432,720};
-    
-    for(int iii=0;iii<repeat_time;++iii){
-    long int startid=RandStart(&G);
-//    cout << startid <<endl;
-    long double count[MAXSUBS];    //count times all subgraph may appear
-    int walk = 0;
-    
-    for(int i=0;i<MAXSUBS;++i)
-        count[i]=0;
-    gettimeofday(&start, NULL);
-    vector<long int> node(4),user(5),degree(3);
-    igraph_vector_t nodeneigh[4];
-    for(int j=0;j<4;j++)
-        igraph_vector_init(&nodeneigh[j],0);
-    
-    while(sample_total<given_time){
-//        cout << " count subgraph time  : " << run_times <<endl;
-        node[0]=startid;
-        igraph_vector_t neigh1;
-        igraph_vector_init(&neigh1,0);
-        igraph_neighbors(&G,&nodeneigh[0],node[0],IGRAPH_ALL);
- //       print_vector(&nodeneigh[0], stdout);
-        user[1] = sfmt_genrand_uint32(&sfmtSeed)%igraph_vector_size(&nodeneigh[0]);
-        node[1] = VECTOR(nodeneigh[0])[user[1]];
+    int W_constant[]={24,8,32,16,16,46,36,84,2,10,40,10,32,70,30,66,116,60,104,168,240};
+    for(int iii=0;iii<repeat_time;iii++){
+        long long samples_total=0;
+        long int startid=RandStart(&G);
+//        cout << startid <<endl;
+        long double count[MAXSUBS];    //count times all subgraph may appear
+        int walk = 0;
 
-        igraph_neighbors(&G,&nodeneigh[1],node[1],IGRAPH_ALL);
-        igraph_neighbors(&G,&neigh1,node[1],IGRAPH_ALL);
-        degree[0]=igraph_vector_size(&neigh1);
-        user[2] = sfmt_genrand_uint32(&sfmtSeed)%degree[0];
-        node[2] = VECTOR(neigh1)[user[2]];
+        for(int i=0;i<MAXSUBS;++i)
+            count[i]=0;
+        gettimeofday(&start, NULL);
+        vector<long int> node(5),user(5),degree(3);
+        igraph_vector_t nodeneigh[4];
+        for(int j=0;j<4;j++)
+            igraph_vector_init(&nodeneigh[j],0);
 
-        igraph_neighbors(&G,&nodeneigh[2],node[2],IGRAPH_ALL);
-        igraph_vector_append(&neigh1,&nodeneigh[2]);
-        degree[1]=igraph_vector_size(&neigh1);
-        user[3] = sfmt_genrand_uint32(&sfmtSeed)%degree[1];
-        node[3] = VECTOR(neigh1)[user[3]];
-        
-        igraph_neighbors(&G,&nodeneigh[3],node[3],IGRAPH_ALL);
-        igraph_vector_append(&neigh1,&nodeneigh[3]);
-        degree[2]=igraph_vector_size(&neigh1);
-        
-//        for(int k=0;k<5;k++)
-//            print_vector(&nodeneigh[k],stdout);
-//        for (int j=0;j<6;j++){
-//            cout << node[j] <<endl;
-//        }
-        
-//        cout << "subgraphsize: " <<subgraph_size<<endl;
-        set<long int> it(node.begin(),node.end());
-        long int dg_prod=degree[0]*degree[1]*degree[2];
-        if(it.size()==4){
-            long int sample_count=0;
-            while(sample_count< degree[2]){
-            user[4] = sample_count++;
-            node[4] = VECTOR(neigh1)[user[4]];
-            
-            if(node[4]==node[0] || node[4]==node[1] || node[4]==node[2] || node[4]==node[3])
-                continue;
+        int run_times = 0;
+        while(samples_total<given_time){
+//            cout << " count subgraph time  : " << run_times <<endl;
+            node[0]=startid;
+            igraph_vector_t neigh1;
+            igraph_vector_init(&neigh1,0);
+            igraph_neighbors(&G,&nodeneigh[0],node[0],IGRAPH_ALL);
+ //           print_vector(&nodeneigh[0], stdout);
+            user[1] = sfmt_genrand_uint32(&sfmtSeed)%igraph_vector_size(&nodeneigh[0]);
+            node[1] = VECTOR(nodeneigh[0])[user[1]];
 
-            igraph_t subgraph;
-            igraph_vector_t vc;
-            igraph_vector_init(&vc,0);
-            igraph_vs_t vids;
-            for(int i = 0; i < 4; ++i){
-//            cout << nodes [i] <<" ";
-//            cout << igraph_vector_size(&neighs[i]) << " : ";
- //           print_vector(&neighs[i],stdout);
-            for(int j = i+1; j < 5; ++j){
-                if(igraph_vector_contains(&nodeneigh[i], node[j])){
-                igraph_vector_push_back(&vc,i);
-                igraph_vector_push_back(&vc,j);                    
-//                cout <<"find !!"<<nodes[i] <<' '<<nodes[j]<<endl;
+            igraph_neighbors(&G,&nodeneigh[1],node[1],IGRAPH_ALL);
+            igraph_neighbors(&G,&neigh1,node[1],IGRAPH_ALL);
+            degree[0]=igraph_vector_size(&neigh1);
+            user[2] = sfmt_genrand_uint32(&sfmtSeed)%degree[0];
+            node[2] = VECTOR(neigh1)[user[2]];
+
+            igraph_neighbors(&G,&nodeneigh[2],node[2],IGRAPH_ALL);
+            igraph_vector_append(&neigh1,&nodeneigh[2]);
+            degree[1]=igraph_vector_size(&neigh1);
+            user[3] = sfmt_genrand_uint32(&sfmtSeed)%degree[1];
+            node[3] = VECTOR(neigh1)[user[3]];
+
+            igraph_neighbors(&G,&nodeneigh[3],node[3],IGRAPH_ALL);
+            igraph_vector_append(&neigh1,&nodeneigh[3]);
+            degree[2]=igraph_vector_size(&neigh1);
+
+//            for(int k=0;k<5;k++)
+//                print_vector(&nodeneigh[k],stdout);
+//            for (int j=0;j<6;j++){
+//                cout << node[j] <<endl;
+//            }
+
+//            cout << "subgraphsize: " <<subgraph_size<<endl;
+            set<long int> it{node[0],node[1],node[2],node[3]};
+            long int dg_prod=degree[0]*degree[1];
+            if(it.size()==4){
+                long int sample_count=0;
+                while(sample_count< degree[2]){
+                user[4] = sample_count++;
+                node[4] = VECTOR(neigh1)[user[4]];
+
+                if(node[4]==node[0] || node[4]==node[1] || node[4]==node[2] || node[4]==node[3])
+                    continue;
+
+                igraph_t subgraph;
+                igraph_vector_t vc;
+                igraph_vector_init(&vc,0);
+                igraph_vs_t vids;
+                for(int i = 0; i < 4; ++i){
+//                cout << nodes [i] <<" ";
+//                cout << igraph_vector_size(&neighs[i]) << " : ";
+ //               print_vector(&neighs[i],stdout);
+                for(int j = i+1; j < 5; ++j){
+                    if(igraph_vector_contains(&nodeneigh[i], node[j])){
+                    igraph_vector_push_back(&vc,i);
+                    igraph_vector_push_back(&vc,j);                    
+//                    cout <<"find !!"<<nodes[i] <<' '<<nodes[j]<<endl;
+                    }
                 }
             }
-        }
-//        cout << endl;
-//        print_vector(&vc,stdout);
-        igraph_create(&subgraph,&vc,0,IGRAPH_UNDIRECTED);
-            igraph_bool_t ios=0;
-            for(int i=0;(i<MAXSUBS)&&!ios;++i){
-                igraph_isomorphic(&subgraph,&graph[i],&ios);
-//                cout << "iso result : " << ios <<endl;
-                if(ios){
-                    
-                    count[i]=count[i]+dg_prod;   //count isomorphic subgraph
-//                    cout << "find the subgraph: " << i << endl;
-                    break;
-                } 
-            }
-            if(!ios) {     //test if find isomorphic fail
-                cout << "FIND SUBGRAPH ISO FAIL!!"<<endl;
-                cout << "Now print the graph edge:"<<endl;
-                igraph_integer_t from,to;
-                for(int k=0;k<igraph_ecount(&subgraph);k++){
-                    igraph_edge(&subgraph, k,&from, &to);
-                    printf(" Num %d edge : from %d to %d\n",k,from,to);
+//            cout << endl;
+//            print_vector(&vc,stdout);
+            igraph_create(&subgraph,&vc,0,IGRAPH_UNDIRECTED);
+                igraph_bool_t ios=0;
+                for(int i=0;(i<MAXSUBS)&&!ios;++i){
+                    igraph_isomorphic(&subgraph,&graph[i],&ios);
+//                    cout << "iso result : " << ios <<endl;
+                    if(ios){
+
+                        count[i]=count[i]+dg_prod;   //count isomorphic subgraph
+//                        cout << "find the subgraph: " << i << endl;
+                        break;
+                    } 
                 }
-                exit(1);
+                if(!ios) {     //test if find isomorphic fail
+                    cout << "FIND SUBGRAPH ISO FAIL!!"<<endl;
+                    cout << "Now print the graph edge:"<<endl;
+                    igraph_integer_t from,to;
+                    for(int k=0;k<igraph_ecount(&subgraph);k++){
+                        igraph_edge(&subgraph, k,&from, &to);
+                        printf(" Num %d edge : from %d to %d\n",k,from,to);
+                    }
+                    exit(1);
+                }
+                igraph_destroy(&subgraph);
+                igraph_vs_destroy(&vids);
             }
-            igraph_destroy(&subgraph);
-            igraph_vs_destroy(&vids);
+            }
+            walk ++;
+            if(walk == walk_per_jump ){
+                walk = 0;
+                startid=RandWalk(&G,NEXTJUMP,node[1]);
+            }
+            else startid = node[1];
+            samples_total+=degree[2];
+            run_times++;
+//            printf("next startnode: %ld",startid);
         }
-        }
-        walk ++;
-        if(walk == walk_per_jump ){
-            walk = 0;
-            startid=RandWalk(&G,NEXTJUMP,node[1]);
-        }
-        else startid = node[1];
-        sample_total+=degree[2];
-//        printf("next startnode: %ld",startid);
-    }
-    gettimeofday(&end,NULL);
-    dur = (end.tv_sec - start.tv_sec) + (double)(end.tv_usec - start.tv_usec)/1000000.0;
-    printf("Use Time:%f\n",dur);  //count time
+        gettimeofday(&end,NULL);
+        dur = (end.tv_sec - start.tv_sec) + (double)(end.tv_usec - start.tv_usec)/1000000.0;
+        printf("Use Time:%f\n",dur);  //count time
 
-    
-//  sort occurrence probability of all subgraph and print most frequent subgraph serial number 
-    long double ans[MAXSUBS];
-    for(int i=0;i<MAXSUBS;++i)
-        ans[i]=((count[i]/W_constant[i])/sample_total)*igraph_ecount(&G)*2;
 
-    cout << "Get" << sample_total <<" Samples" <<endl;
+//      sort occurrence probability of all subgraph and print most frequent subgraph serial number 
+        long double ans[MAXSUBS];
+        for(int i=0;i<MAXSUBS;++i)
+            ans[i]=((count[i]/W_constant[i])/run_times)*igraph_ecount(&G)*2;
 
-    int count0=0;
-    for(int i=0;i<MAXSUBS;++i)
-        if(ans[i]==0) {count0++;
-//        cout << "No found subgraph : "<<i<<endl;
-    }
-    cout  << "0_count_Subgraph counts " << count0 << endl;
-    vector<pair<long double,int > > sorted;
-    for(int i=0;i<MAXSUBS;++i)
-        sorted.push_back(make_pair(ans[i],i));
-    sort(sorted.rbegin(),sorted.rend());
-    for(int i=0;i<MAXSUBS;++i){
-        printf("SubGraph[%d] account for %Lf \n",sorted[i].second,sorted[i].first);
-    }
+        cout << "Get " << samples_total <<" Samples" <<endl;
 
-    const char *delim = ".";
-	char *fileNosuffix=strtok(filename,delim);
-	string s=fileNosuffix;
-	s = s + ".ssrw5";
-    cout << "Now writing to " << s <<endl;
-	ofstream out(s,std::ios_base::app);
-    out.precision(15);
-    for(int i=0;i<MAXSUBS;++i){
-        out << i << " "<<ans[i]<<endl;
-    }
-    out << dur<<endl;
-    out.close();
+        int count0=0;
+        for(int i=0;i<MAXSUBS;++i)
+            if(ans[i]==0) count0++;
+//            cout << "No found subgraph : "<<i<<endl;
+        cout  << "0_count_Subgraph counts " << count0 << endl;
+        vector<pair<long double,int > > sorted;
+        for(int i=0;i<MAXSUBS;++i)
+            sorted.push_back(make_pair(ans[i],i));
+        sort(sorted.rbegin(),sorted.rend());
+        for(int i=0;i<MAXSUBS;++i)
+            printf("SubGraph[%d] account for %Lf \n",sorted[i].second,sorted[i].first);
+
+        const char *delim = ".";
+	    char *fileNosuffix=strtok(filename,delim);
+	    string s=fileNosuffix;
+	    s = s + ".ssrw5";
+        cout << "Now writing to " << s <<endl;
+	    ofstream out(s,std::ios_base::app);
+        out.precision(15);
+        for(int i=0;i<MAXSUBS;++i)
+            out << i << " "<<ans[i]<<endl;
+        out << dur<<endl;
+        out.close();
+        samples_total = 0;
     }
     return 0;
 } 
