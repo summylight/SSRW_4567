@@ -172,7 +172,7 @@ int main(int argc, char* argv[]){
             igraph_vector_init(&nodeneigh[j],0);
         
         int samples = 0;
-        while(samples<given_time){
+        while(run_times<given_time){
 //            cout << " count subgraph time  : " << run_times <<endl;
             node[0]=startid;
             igraph_vector_t neigh1;
@@ -219,7 +219,7 @@ int main(int argc, char* argv[]){
 
 //            cout << "subgraphsize: " <<subgraph_size<<endl;
             set<long int> it{node[0],node[1],node[2],node[3]};
-            long int dg_prod=degree[0]*degree[1]*degree[2];
+            long int dg_prod=degree[0]*degree[1];
             if(it.size()==4){
 
                 long int sample_count=0;
@@ -287,7 +287,7 @@ int main(int argc, char* argv[]){
         gettimeofday(&end,NULL);
         dur = (end.tv_sec - start.tv_sec) + (double)(end.tv_usec - start.tv_usec)/1000000.0;
         printf("Use Time:%f\n",dur);  //count time
-
+        printf("Get %d samples\n",samples);
 
 //      sort occurrence probability of all subgraph and print most frequent subgraph serial number 
         long double ans[MAXSUBS];
