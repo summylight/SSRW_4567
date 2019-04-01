@@ -199,6 +199,7 @@ int main(int argc, char* argv[]){
                 igraph_vector_t vc;
                 igraph_vector_init(&vc,0);
                 for(int i = 0; i < 3; ++i){
+                    //generate 0-3 4-nodes connection
 //                    cout << nodes [i] <<" ";
 //                    cout << igraph_vector_size(&neighs[i]) << " : ";
  //                   print_vector(&neighs[i],stdout);
@@ -220,20 +221,19 @@ int main(int argc, char* argv[]){
                     igraph_t subgraph;
                     igraph_vector_t vctmp;
                     igraph_vector_copy(&vctmp,&vc);
-                    igraph_vector_init(&vc,0);
                     for(int i = 0; i < 4; ++i){
 //                    cout << nodes [i] <<" ";
 //                    cout << igraph_vector_size(&neighs[i]) << " : ";
  //                   print_vector(&neighs[i],stdout);
                         if(igraph_vector_contains(&nodeneigh[i], node[4])){
-                        igraph_vector_push_back(&vc,4);
-                        igraph_vector_push_back(&vc,4);                    
+                        igraph_vector_push_back(&vctmp,4);
+                        igraph_vector_push_back(&vctmp,4);                    
 //                        cout <<"find !!"<<nodes[i] <<' '<<nodes[j]<<endl;
                         }
                     }
 //                cout << endl;
 //                print_vector(&vc,stdout);
-                igraph_create(&subgraph,&vc,0,IGRAPH_UNDIRECTED);
+                igraph_create(&subgraph,&vctmp,0,IGRAPH_UNDIRECTED);
                     igraph_bool_t ios=0;
                     for(int i=0;(i<MAXSUBS)&&!ios;++i){
                         igraph_isomorphic(&subgraph,&graph[i],&ios);

@@ -221,58 +221,72 @@ int main(int argc, char* argv[]){
             set<long int> it{node[0],node[1],node[2],node[3]};
             long int dg_prod=degree[0]*degree[1];
             if(it.size()==4){
+                long int sample_count=0;
+                igraph_vector_t vc;
+                igraph_vector_init(&vc,0);
+                for(int i = 0; i < 3; ++i){
+                    //generate 0-3 4-nodes connection
+//                    cout << nodes [i] <<" ";
+//                    cout << igraph_vector_size(&neighs[i]) << " : ";
+ //                   print_vector(&neighs[i],stdout);
+                    for(int j = i+1; j < 4; ++j){
+                        if(igraph_vector_contains(&nodeneigh[i], node[j])){
+                        igraph_vector_push_back(&vc,i);
+                        igraph_vector_push_back(&vc,j);                    
+//                        cout <<"find !!"<<nodes[i] <<' '<<nodes[j]<<endl;
+                        }
+                    }   
+                }
 
                 long int sample_count=0;
                 while(sample_count< degree[2]){
-                user[4] = sample_count++;
-                node[4] = VECTOR(neigh1)[user[4]];
+                    user[4] = sample_count++;
+                    node[4] = VECTOR(neigh1)[user[4]];
 
-                if(node[4]==node[0] || node[4]==node[1] || node[4]==node[2] || node[4]==node[3])
-                    continue;
+                    if(node[4]==node[0] || node[4]==node[1] || node[4]==node[2] || node[4]==node[3])
+                        continue;
 
-                igraph_t subgraph;
-                igraph_vector_t vc;
-                igraph_vector_init(&vc,0);
-                igraph_vs_t vids;
-                for(int i = 0; i < 4; ++i){
-//                cout << nodes [i] <<" ";
-//                cout << igraph_vector_size(&neighs[i]) << " : ";
- //               print_vector(&neighs[i],stdout);
-                for(int j = i+1; j < 5; ++j){
-                    if(igraph_vector_contains(&nodeneigh[i], node[j])){
-                    igraph_vector_push_back(&vc,i);
-                    igraph_vector_push_back(&vc,j);                    
-//                    cout <<"find !!"<<nodes[i] <<' '<<nodes[j]<<endl;
+                    igraph_t subgraph;
+                    igraph_vector_t vctmp;
+                    igraph_vector_copy(&vctmp,&vc);
+                    for(int i = 0; i < 4; ++i){
+//                    cout << nodes [i] <<" ";
+//                    cout << igraph_vector_size(&neighs[i]) << " : ";
+ //                   print_vector(&neighs[i],stdout);
+                        if(igraph_vector_contains(&nodeneigh[i], node[4])){
+                        igraph_vector_push_back(&vctmp,4);
+                        igraph_vector_push_back(&vctmp,4);                    
+//                        cout <<"find !!"<<nodes[i] <<' '<<nodes[j]<<endl;
+                        }
                     }
-                }
-            }
-//            cout << endl;
-//            print_vector(&vc,stdout);
-            igraph_create(&subgraph,&vc,0,IGRAPH_UNDIRECTED);
-                igraph_bool_t ios=0;
-                for(int i=0;(i<MAXSUBS)&&!ios;++i){
-                    igraph_isomorphic(&subgraph,&graph[i],&ios);
-//                    cout << "iso result : " << ios <<endl;
-                    if(ios){
-                        long int dg_prod=degree[0]*degree[1];
-                        count[i]=count[i]+dg_prod;   //count isomorphic subgraph
-//                        cout << "find the subgraph: " << i << endl;
-                        break;
-                    } 
-                }
-                if(!ios) {     //test if find isomorphic fail
-                    cout << "FIND SUBGRAPH ISO FAIL!!"<<endl;
-                    cout << "Now print the graph edge:"<<endl;
-                    igraph_integer_t from,to;
-                    for(int k=0;k<igraph_ecount(&subgraph);k++){
-                        igraph_edge(&subgraph, k,&from, &to);
-                        printf(" Num %d edge : from %d to %d\n",k,from,to);
+//                cout << endl;
+//                print_vector(&vc,stdout);
+                igraph_create(&subgraph,&vctmp,0,IGRAPH_UNDIRECTED);
+                    igraph_bool_t ios=0;
+                    for(int i=0;(i<MAXSUBS)&&!ios;++i){
+                        igraph_isomorphic(&subgraph,&graph[i],&ios);
+//                        cout << "iso result : " << ios <<endl;
+                        if(ios){
+                            long int dg_prod=degree[0]*degree[1];
+                            count[i]=count[i]+dg_prod;   //count isomorphic subgraph
+//                            cout << "find the subgraph: " << i << endl;
+                            break;
+                        } 
                     }
-                    exit(1);
+                    if(!ios) {     //test if find isomorphic fail
+                        cout << "FIND SUBGRAPH ISO FAIL!!"<<endl;
+                        cout << "Now print the graph edge:"<<endl;
+                        igraph_integer_t from,to;
+                        for(int k=0;k<igraph_ecount(&subgraph);k++){
+                            igraph_edge(&subgraph, k,&from, &to);
+                            printf(" Num %d edge : from %d to %d\n",k,from,to);
+                        }
+                        exit(1);
+                    }
+                    igraph_destroy(&subgraph);
+                    igraph_vector_destroy(&vctmp);
                 }
-                igraph_destroy(&subgraph);
-                igraph_vs_destroy(&vids);
-            }
+                igraph_vector_destroy(&vc);
             }
             walk ++;
             if(walk == walk_per_jump ){
