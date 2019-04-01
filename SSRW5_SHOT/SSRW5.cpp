@@ -226,7 +226,7 @@ int main(int argc, char* argv[]){
 //                    cout << igraph_vector_size(&neighs[i]) << " : ";
  //                   print_vector(&neighs[i],stdout);
                         if(igraph_vector_contains(&nodeneigh[i], node[4])){
-                        igraph_vector_push_back(&vctmp,4);
+                        igraph_vector_push_back(&vctmp,i);
                         igraph_vector_push_back(&vctmp,4);                    
 //                        cout <<"find !!"<<nodes[i] <<' '<<nodes[j]<<endl;
                         }
