@@ -159,7 +159,7 @@ int main(int argc, char* argv[]){
             igraph_vector_init(&nodeneigh[j],0);
 
         int run_times = 0;
-        while(run_times<given_time){
+        while(samples_total<given_time){
 //            cout << " count subgraph time  : " << run_times <<endl;
             node[0]=startid;
             igraph_vector_t neigh1;
@@ -236,6 +236,7 @@ int main(int argc, char* argv[]){
                 igraph_create(&subgraph,&vctmp,0,IGRAPH_UNDIRECTED);
                     igraph_bool_t ios=0;
                     for(int i=0;(i<MAXSUBS)&&!ios;++i){
+                        if(igraph_ecount(&subgraph)!=igraph_ecount(&graph[i])) continue;
                         igraph_isomorphic(&subgraph,&graph[i],&ios);
 //                        cout << "iso result : " << ios <<endl;
                         if(ios){
